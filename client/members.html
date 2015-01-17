@@ -1,0 +1,55 @@
+<template name="memberlist">
+  <table class="ui celled unstackable table" style="margin-top: 40px">
+    <thead>
+      <th>Number</th>
+      <th>Since</th>
+      <th>Name</th>
+      <th>Emails</th>
+      <th>Aliases</th>
+    </thead>
+    <tbody>
+    {{#each members}}
+      {{> member}}
+    {{/each}}
+    </tbody>
+  </table>
+</template>
+
+<template name="memberpicker">
+  <table class="ui celled unstackable sortable small compact table" style="margin-top: 40px">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{#each members}}
+      {{> memberPick}}
+    {{/each}}
+    </tbody>
+  </table>
+</template>
+
+<template name="memberPick">
+  <tr class="member-pick-row" data-id="{{_id}}">
+    <td class="collapsing">{{_id}}</td>
+    <td class="collapsing">{{first}}</td>
+    <td class="collapsing">{{last}}</td>
+    <td class="collapsing">{{email}}</td>
+    <td></td>
+  </tr>
+</template>
+
+<template name="member">
+  <tr>
+    <td class="collapsing">{{_id}}</td>
+    <td class="collapsing">{{joined}}</td>
+    <td class="collapsing">{{first}} {{last}}</td>
+    <td class="collapsing">{{email}}</td>
+    <td></td>
+  </tr>
+</template>
+

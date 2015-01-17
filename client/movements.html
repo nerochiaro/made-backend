@@ -1,0 +1,88 @@
+<template name="history">
+  <table class="ui celled unstackable table" style="margin-top: 40px">
+    <thead>
+      <th >Date</th>
+      <th>ID</th>
+      <th>Type</th>
+      <th>Reason</th>
+      <th>Period</th>
+      <th class="right aligned">Amount</th>
+      <th>Description</th>
+      <th>Member</th>
+    </thead>
+    <tbody>
+    {{#each movements}}
+      {{> movement}}
+    {{/each}}
+    </tbody>
+  </table>
+</template>
+
+<template name="movement">
+  <tr class="{{selected}} {{#if isIncome}}positive{{else}}negative{{/if}}" data-alias="{{alias}}" data-id="{{_id}}">
+    <td class="collapsing">{{humanDate}}</td>
+    <td class="collapsing">{{_id}}</td>
+    <td class="collapsing">{{type}}</td>
+    {{#if isPayment}}
+      {{> paymentDetails payment}}
+    {{else}}
+      <td colspan="2" class="collapsing"></td>
+    {{/if}}
+    <td class="right aligned collapsing">{{humanAmount}} {{currency}}</td>
+    <td>{{combinedDescription}}</td>
+    <td class="collapsing">
+      {{#if isPayment}}
+        {{#if member}}
+          {{#if member.isAlias}}
+          <div class="ui labeled teal mini button remove-alias"><i class="delete icon"></i>{{member.first}} {{member.last}}</div>
+          {{else}}
+          <div class="ui labeled green mini button"><i class="check icon"></i>{{member.first}} {{member.last}}</div>
+          {{/if}}
+        {{else}}
+          {{#each proposedMembers}}
+              {{#if addNew}}
+                <div class="ui labeled orange mini button choose-alias"><i class="ui user icon"></i> Find member</div>
+              {{else}}
+                <div class="ui label">
+                  <i class="question icon"></i>{{first}} {{last}}
+                </div>
+              {{/if}}
+          {{/each}}
+        {{/if}}
+      {{/if}}
+    </td>
+  </tr>
+</template>
+
+<template name="paymentDetails">
+  <td class="collapsing">
+    {{#if isEditable}}
+      <div class="ui mini basic icon button cycle-reason"><i class="refresh icon"></i></div>
+    {{/if}}
+    {{#if type}}<div class="ui small label">{{type}}</div>{{/if}}
+  </td>
+  <td class="collapsing period-area">
+    {{#if editingPeriod}}
+      <div class="ui label">Choose payment period</div>
+      {{> periodEditor this}}
+    {{else}}
+      {{#each period}}<div class="ui label mini">{{this}}</div>{{/each}}
+    {{/if}}
+  </td>
+</template>
+
+<template name="periodEditor">
+  <div class="ui raised segment" style="position: absolute; y:-100px; background-color:white; border: 1px solid black">
+    <div class="ui floating label close-editor"><i class="ui close icon"></i></div>
+    {{#each calendar}}
+    <div>
+      <div class="ui label">{{year}}</div>
+      <div class="ui mini buttons">   
+      {{#each months}}
+        <div class="ui {{color}} button toggle-month" data-month='{{../year}}-{{number}}'>{{name}}</div>
+      {{/each}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</template>
