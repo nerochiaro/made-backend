@@ -32,7 +32,15 @@ Template.member.events({
 });
 
 Template.memberPaymentsList.helpers({
-  'payments': function () {}
+  'payments': function () {
+    var payments = Payments.find({ member: this._id }).fetch();
+    var ids = _.pluck(payments, '_id');
+    return Movements.find({_id: {$in: ids}}, {sort: { date: 1 }}).map(function(m) {
+      var p = _.find(payments, function(p) { return p._id == m._id });
+      if (p) m.payment = p;
+      return m;
+    })
+  }
 })
 
 // Memberpicker is used by the history view
@@ -53,19 +61,33 @@ Template.memberPayments.helpers({
     if (p.length == 0) return [];
     var cal = [];
     p = _.sortBy(_.flatten(_.pluck(p, 'months')), _.identity);
+    if (this._id == 7) console.log(p);
     p.map(function(m) { return moment(m, 'YYYYMM') }).forEach(function(m) {
       if (cal.length == 0) cal.push(m)
       else {
-        if (_.last(cal).isSame(m, 'month')) _.last(cal).isDuplicate = true;
-        else cal.push(m);
+        var last = _.last(cal);
+        if (last.isSame(m, 'month')) last.isDuplicate = true;
+        else {
+          // fill in missing months if there are gaps
+          var d = m.diff(last, 'month');
+          if (d > 1) {
+            for (var i = 1; i < d; i++) {
+              var missing = last.clone().add(i, 'month');
+              missing.isMissing = true;
+              cal.push(missing);
+            }
+          }
+          cal.push(m);
+        }
       }
     })
     return cal.map(function(m) { return {
       year: m.year(),
       month: m.format("MMM"),
-      color: m.isDuplicate ? "red" : ""
-    } });
-  }
+      color: m.isDuplicate ? "red" : (m.isMissing ? "" : "green") 
+    }})
+  },
+  startYear: function(months) { return months ? months[0].year : "" }
 });
 
 // This needs to stay globally declared as the table sorter will need

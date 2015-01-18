@@ -13,13 +13,14 @@
     </thead>
     <tbody>
     {{#each movements}}
-      {{> movement}}
+      {{> movement item=this memberedit=true}}
     {{/each}}
     </tbody>
   </table>
 </template>
 
 <template name="movement">
+  {{#with item}}
   <tr class="{{color}}" data-alias="{{alias}}" data-id="{{_id}}">
     <td class="collapsing">{{humanDate}}</td>
     <td class="collapsing">{{_id}}</td>
@@ -32,16 +33,19 @@
     <td class="right aligned collapsing">{{humanAmount}} {{currency}}</td>
     <td>{{combinedDescription}}</td>
     <td class="collapsing">
+      {{#if ../memberedit}}
       {{#if isPayment}}
         {{#if payment.memberInfo}}
         <div class="ui green label">
           {{payment.memberInfo.first}} {{payment.memberInfo.last}}
-          <i class="ui close icon remove-member"></i>
+          {{#unless isCash}}<i class="ui close icon remove-member"></i>{{/unless}}
         </div>
         {{/if}}
       {{/if}}
+      {{/if}}
     </td>
     <td class="collapsing">
+      {{#if ../memberedit}}
       {{#if isPayment}}
         {{#unless payment.memberInfo}}
           {{#if proposedUser}}
@@ -53,8 +57,10 @@
           <div class="ui orange mini icon button pick-member"><i class="ui search icon"></i></div>
         {{/unless}}
       {{/if}}
+      {{/if}}
     </td>
   </tr>
+  {{/with}}
 </template>
 
 <template name="paymentDetails">

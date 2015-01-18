@@ -39,15 +39,20 @@
 </template>
 
 <template name="memberPayments">
-  {{#each months}}
-    <div class="ui label {{color}}">{{year}}{{month}}</div>
-  {{/each}}
+  {{#with months}}
+    <div class="ui mini buttons">
+    <div class="ui button">{{startYear this}}</div>
+    {{#each this}}
+      <div class="ui button {{color}}">{{month}}</div>
+    {{/each}}
+    </div>
+  {{/with}}
 </template>
 
 <template name="memberPaymentsList">
   <table class="ui celled unstackable table">
   {{#each payments}}
-    
+    {{> movement item=this memberedit=false}}
   {{/each}}
   </table>
 </template>

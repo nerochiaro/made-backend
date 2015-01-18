@@ -63,7 +63,7 @@ Template.movement.helpers({
       return parts.join(" ");  
     } else if (this.source == "CA") return this.description;
     else if (this.source == "BK") return this.note;
-    else return "";      
+    else return "";
   },
   proposedMembers: function() {
     return (this.member === undefined) ? [{addNew: true}] : []
@@ -81,7 +81,8 @@ Template.movement.helpers({
   color: function() { 
     return Session.get('current-payment') == this._id ? "active" :
            (this.amount >= 0 ? "positive" : "negative") 
-  }
+  },
+  isCash: function() { return this.source == "CA" }
 });
 
 Template.paymentDetails.helpers({
