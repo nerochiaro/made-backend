@@ -59,8 +59,10 @@ Template.movement.helpers({
     if (this.source == "PP") {
       var parts = [];
       if (this.amount > 0) { parts.push(this.name); parts.push("<" + this.email + ">") }
-      if (this.note) { parts.push(this.note) }
-      return parts.join(" ");
+      if (this.subject) parts.push(this.subject);
+      if (this.note) parts.push(this.note);
+      if (this.title) parts.push(this.title);
+      return _.uniq(parts).join(" ");
     } else if (this.source == "CA") return this.description;
     else if (this.source == "BK") return this.note;
     else return "";

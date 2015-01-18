@@ -92,7 +92,7 @@ MADEStats.readPaypalFile = Async.wrap(function(filename, callback) {
         timeZone: data[2],
         name: data[3],
         type: type,
-        description: data[6],
+        subject: data[6],
         currency: data[7],
         amounts: {
           gross: amount,
@@ -102,7 +102,8 @@ MADEStats.readPaypalFile = Async.wrap(function(filename, callback) {
         amount: amount, // convenience
         note: data[11],
         email: data[12],
-        _id: source + data[14]
+        _id: source + data[14],
+        title: data[15]
       });
   })
   .on("end", function(){
