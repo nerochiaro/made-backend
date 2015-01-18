@@ -183,8 +183,8 @@ MADEStats.readMembersFile = Async.wrap(function(filename, callback) {
       }
       var item = {
         dateJoined: data[0],
-        first: data[1],
-        last: data[2],
+        first: data[1].trim(),
+        last: data[2].trim(),
         email: data[3],
         phone: data[4],
         fiscalId: data[5],
