@@ -8,19 +8,19 @@
     Session.set('current-tab', startingTab);
     $('[data-tab="' + startingTab + '"]').addClass('active');
 
-    $('.menu .item').tab({history: false, debug: false}).on('click', function(e) { 
+    $('.menu .item').tab({history: false, debug: false}).on('click', function(e) {
       Session.set('current-tab', $(this).attr('data-tab'))
     });
-    $("#sidebar").sidebar('setting', { 
+    $("#sidebar").sidebar('setting', {
       dimPage: false,
       onHide: function() { Session.set('current-payment', '-none-') },
-      onShow: function() { 
-        $(".table.sortable").tablesort() 
+      onShow: function() {
+        $(".table.sortable").tablesort()
         $(".table.sortable").on('tablesort:complete', function(event, tablesort) {
           $(event.target).find('.ui.button.set-member').click(memberPickClicked);
           $(event.target).find('.ui.button.set-alias').click(aliasPickClicked);
         });
-      }    
+      }
     });
   });
   </script>
@@ -33,7 +33,7 @@
   <div class="pusher">
     <div class="ui fixed main menu" id="mainmenu">
       <a class="item" data-tab="movements">
-        <i class="table icon"></i> Movements 
+        <i class="table icon"></i> Movements
       </a>
       <a class="item" data-tab="members">
         <i class="user icon"></i> Users
@@ -41,7 +41,7 @@
     </div>
     <div class="ui bottom attached tab segment" data-tab="members">
       {{> memberlist}}
-    </div> 
+    </div>
     <div class="ui bottom attached tab segment" data-tab="movements">
       {{> history}}
     </div>

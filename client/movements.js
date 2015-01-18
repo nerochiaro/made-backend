@@ -20,7 +20,7 @@ function movementAlias(movement) {
   else if (movement.source == "BK") return movement.note;
 }
 
-function movementIsPayment(movement) { 
+function movementIsPayment(movement) {
   return (movement.amount > 0 &&
     (movement.source == "CA") ||
     (movement.source == "BK" && movement.type == "Payment") ||
@@ -40,7 +40,7 @@ function splitYYYYMM(yyyymm) { return {
   year: parseInt(yyyymm.substring(0, 4), 10),
   month: parseInt(yyyymm.substring(4), 10)
 }}
-    
+
 Template.movement.helpers({
   humanDate: function() {
     var d = String(this.date);
@@ -48,10 +48,10 @@ Template.movement.helpers({
     p.unshift("<small>" + d.substring(0, 4) + "</small>");
     return Spacebars.SafeString(p.join("&nbsp;"));
   },
-  humanAmount: function() { 
-    return String(this.amount).slice(0, -2) + "." + String(this.amount).slice(-2) 
+  humanAmount: function() {
+    return String(this.amount).slice(0, -2) + "." + String(this.amount).slice(-2)
   },
-  currency: function() { 
+  currency: function() {
     if (this.currency === undefined) return "€";
     else return ({ "GBP" : "£", "USD" : "$", "EUR" : "€"}[this.currency]) || this.currency;
   },
@@ -60,7 +60,7 @@ Template.movement.helpers({
       var parts = [];
       if (this.amount > 0) { parts.push(this.name); parts.push("<" + this.email + ">") }
       if (this.note) { parts.push(this.note) }
-      return parts.join(" ");  
+      return parts.join(" ");
     } else if (this.source == "CA") return this.description;
     else if (this.source == "BK") return this.note;
     else return "";
@@ -78,9 +78,9 @@ Template.movement.helpers({
     return (this.source == "CA") ? "Payment" : this.type;
   },
   isPayment: function() { return movementIsPayment(this) },
-  color: function() { 
+  color: function() {
     return Session.get('current-payment') == this._id ? "active" :
-           (this.amount >= 0 ? "positive" : "negative") 
+           (this.amount >= 0 ? "positive" : "negative")
   },
   isCash: function() { return this.source == "CA" }
 });
@@ -104,7 +104,7 @@ Template.paymentDetails.events({
 });
 
 function monthInList(list, year, month) {
-  return list ? list.some(function(m) { 
+  return list ? list.some(function(m) {
     var d = splitYYYYMM(m);
     return d.year == year && d.month == month;
   }) : false;
@@ -117,10 +117,10 @@ Template.periodEditor.helpers({
     var cal = [];
     for (var y = 2013; y <= 2015; y++) { //FIXME: make years more dynamic
       cal.push({year: y, months: monthNames.map(function(m, i) {
-        return { 
-          name: m, 
-          number: i, 
-          color: monthInList(selectedMonths, y, i + 1) ? 'orange' : '' 
+        return {
+          name: m,
+          number: i,
+          color: monthInList(selectedMonths, y, i + 1) ? 'orange' : ''
         };
       })});
     }
@@ -129,14 +129,14 @@ Template.periodEditor.helpers({
 })
 
 Template.periodEditor.events({
-  'click .ui.label.close-editor': function (event) { 
-    Session.set('current-period', '-none-');   
+  'click .ui.label.close-editor': function (event) {
+    Session.set('current-period', '-none-');
     event.stopPropagation();
   },
   'click .ui.button.toggle-month': function(event) {
     var month = $(event.currentTarget).attr('data-month');
     var movement = $(event.currentTarget).parents('tr');
-    var id = movement.attr('data-id');   
+    var id = movement.attr('data-id');
     if (month) {
       var month = month.split('-');
       Meteor.call('paymentToggleMonth', id, month[0], month[1]);
@@ -162,7 +162,7 @@ Template.movement.events({
   },
   'click .ui.button.cycle-reason': function (event) {
     var movement = $(event.currentTarget).parents('tr');
-    var id = movement.attr('data-id');   
+    var id = movement.attr('data-id');
     Meteor.call('paymentCycleReason', id);
   }
 });

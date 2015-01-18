@@ -31,7 +31,7 @@ if (Meteor.isServer) {
       _.each(list, function(m) {
         called++
         if (collection.findOne(m._id)) duplicates.push(m._id);
-        else collection.insert(m, function(err, id) { 
+        else collection.insert(m, function(err, id) {
           if (err) console.log("Failed to insert", id, ":", err)
           else inserted++;
         });
@@ -93,11 +93,11 @@ if (Meteor.isServer) {
       console.log("calling cycle reason", movement);
       if (movement && String(movement).trim().length > 0) {
         var payment = Payments.findOne(movement);
-        if (payment) { 
+        if (payment) {
           var reason = payment.type;
           reason = reasons[(reasons.indexOf(reason) + 1) % reasons.length];
         } else reason = reasons[0];
-        
+
         Payments.upsert(movement, { $set: { type: reason }}, function(err, id) {
           if (err) console.log("Failed to update payment", err)
         });

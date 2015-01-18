@@ -22,7 +22,7 @@ MADEStats.readBankFile = Async.wrap(function(filename, callback) {
     movement.description = description;
     movement.type = "";
     movement.note = description;
-    
+
     var replaced = false;
     for (var key in bankDescriptionToType)
       if (description.indexOf(key) == 0) {
@@ -119,7 +119,7 @@ MADEStats.readCashFile = Async.wrap(function(filename, callback) {
   function pad(number, digits) {
     return Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
   }
-  function parseDateValue(d) { 
+  function parseDateValue(d) {
     d = d ? d.split("-").map(function(p, i) { return pad(i == 1 ? months.indexOf(p) + 1 : p, 2) }).reverse().join("") : "";
     d = parseInt(d, 10);
     return isNaN(d) ? 0 : d;
@@ -369,7 +369,7 @@ MADEStats.calculateGlobalStats = function(from, to, movements) {
     }
   }
   var ignored = ["BK0879413437-000000000000", "BK0879414519-000000000000"]
-  
+
   movements.bank.forEach(function(m) {
     if (ignored.indexOf(m.id) != -1) return;
     if (from && m.dateTransaction < from) return;
@@ -379,7 +379,7 @@ MADEStats.calculateGlobalStats = function(from, to, movements) {
     var group = totals[groupName];
     var namegroup = names[groupName];
     var matched = false;
-    
+
     for (type in namegroup) {
       var namesingroup = namegroup[type];
       namesingroup.some(function(name) {
@@ -399,7 +399,7 @@ MADEStats.calculateGlobalStats = function(from, to, movements) {
       group[type] = group[type] ? group[type] + Math.abs(m.amount) : Math.abs(m.amount);
     }
   });
-    
+
   for (var group in totals) {
     var total = 0;
     for (var type in totals[group]) {
@@ -409,7 +409,7 @@ MADEStats.calculateGlobalStats = function(from, to, movements) {
     }
     totals[group]["total"] = total;
   }
- 
+
   //console.log(totals);
   //console.log(totals.income.total - totals.expense.total);
 }

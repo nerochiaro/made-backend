@@ -84,7 +84,7 @@ Template.memberPayments.helpers({
     return cal.map(function(m) { return {
       year: m.year(),
       month: m.format("MMM"),
-      color: m.isDuplicate ? "red" : (m.isMissing ? "" : "green") 
+      color: m.isDuplicate ? "red" : (m.isMissing ? "" : "green")
     }})
   },
   startYear: function(months) { return months ? months[0].year : "" }
@@ -100,7 +100,7 @@ aliasPickClicked = function(event) {
   Meteor.call('aliasAdd', member, alias);
   Session.set('current-payment', '-none-')
   $("#sidebar").sidebar('hide');
-} 
+}
 
 memberPickClicked = function(event) {
   var member = $(event.currentTarget).parents('tr').attr('data-member');
@@ -109,9 +109,9 @@ memberPickClicked = function(event) {
   Meteor.call('paymentMemberSet', payment, member);
   Session.set('current-payment', '-none-')
   $("#sidebar").sidebar('hide');
-} 
+}
 
 Template.memberPick.events({
   'click .ui.button.set-alias': aliasPickClicked,
-  'click .ui.button.set-member': memberPickClicked  
+  'click .ui.button.set-member': memberPickClicked
 });
