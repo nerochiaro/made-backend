@@ -3,6 +3,7 @@ var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
 
 Template.memberlist.helpers({
   members: function () {
+    if (Session.get('current-tab') != 'members') return [];
     return Members.find({}, { sort: { date: -1 } });
   }
 });

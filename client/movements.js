@@ -1,5 +1,6 @@
 Template.history.helpers({
   movements: function () {
+    if (Session.get('current-tab') != 'movements') return [];
     return Movements.find({}, { sort: { date: 1 } }).map(function(m){
       if (movementIsPayment(m)) {
         // FIXME: All the following fetching is probably inefficient. Denormalize or collect+update later.

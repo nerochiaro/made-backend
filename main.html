@@ -4,8 +4,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="text/javascript">
   $(document).ready(function() {
+    var startingTab = 'members';
+    Session.set('current-tab', startingTab);
+    $('[data-tab="' + startingTab + '"]').addClass('active');
+
     $('.menu .item').tab({history: false, debug: false}).on('click', function(e) { 
-      console.log('tab clicked', $(this).attr('data-tab'))
+      Session.set('current-tab', $(this).attr('data-tab'))
     });
     $("#sidebar").sidebar('setting', { 
       dimPage: false,
@@ -31,11 +35,11 @@
       <a class="item" data-tab="movements">
         <i class="table icon"></i> Movements 
       </a>
-      <a class="active item" data-tab="users">
+      <a class="item" data-tab="members">
         <i class="user icon"></i> Users
       </a>
     </div>
-    <div class="ui bottom attached active tab segment" data-tab="users">
+    <div class="ui bottom attached tab segment" data-tab="members">
       {{> memberlist}}
     </div> 
     <div class="ui bottom attached tab segment" data-tab="movements">
