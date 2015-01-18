@@ -3,6 +3,13 @@ Members = new Mongo.Collection("members");
 Aliases = new Mongo.Collection("aliases");
 Payments = new Mongo.Collection("payments");
 
+if (Meteor.isClient) {
+  Meteor.subscribe('membersList')
+  Meteor.subscribe('paymentsList')
+  Meteor.subscribe('aliasesList')
+  Meteor.subscribe('movementsList')
+}
+
 // On server startup, create some players if the database is empty.
 if (Meteor.isServer) {
   //MADEStats.correlateMovements(movements);
