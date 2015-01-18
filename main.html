@@ -28,17 +28,17 @@
   </div>
   <div class="pusher">
     <div class="ui fixed main menu" id="mainmenu">
-      <a class="active item" data-tab="movements">
+      <a class="item" data-tab="movements">
         <i class="table icon"></i> Movements 
       </a>
-      <a class="item" data-tab="users">
+      <a class="active item" data-tab="users">
         <i class="user icon"></i> Users
       </a>
     </div>
-    <div class="ui bottom attached tab segment" data-tab="users">     
+    <div class="ui bottom attached active tab segment" data-tab="users">
       {{> memberlist}}
     </div> 
-    <div class="ui bottom attached active tab segment" data-tab="movements">
+    <div class="ui bottom attached tab segment" data-tab="movements">
       {{> history}}
     </div>
   </div>

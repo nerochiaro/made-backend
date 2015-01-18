@@ -6,6 +6,7 @@
       <th>Name</th>
       <th>Emails</th>
       <th>Aliases</th>
+      <th>Payments</th>
     </thead>
     <tbody>
     {{#each members}}
@@ -26,7 +27,29 @@
       <div class="ui label" data-alias="{{_id}}">{{_id}}<i class="ui icon delete remove-alias"></i></div> 
     {{/each}}
     </td>
+    <td class="member-payments">
+    {{> memberPayments}}
+    </td>
   </tr>
+  {{#if showPayments}}
+  <tr><td colspan="6">
+  {{> memberPaymentsList}}
+  </td></tr>
+  {{/if}}
+</template>
+
+<template name="memberPayments">
+  {{#each months}}
+    <div class="ui label {{color}}">{{year}}{{month}}</div>
+  {{/each}}
+</template>
+
+<template name="memberPaymentsList">
+  <table class="ui celled unstackable table">
+  {{#each payments}}
+    
+  {{/each}}
+  </table>
 </template>
 
 <!-- used by the history view -->

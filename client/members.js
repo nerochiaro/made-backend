@@ -1,3 +1,4 @@
+// FIXME: refactor in a common utils.js from here and movements.js
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 Template.memberlist.helpers({
@@ -14,21 +15,55 @@ Template.member.helpers({
   },
   aliases: function() {
     return Aliases.find({user: String(this._id)});
-  }
+  },
+  showPayments: function() { return this._id == Session.get('current-member')}
 });
 
 Template.member.events({
   'click .ui.icon.remove-alias': function(event) {
     var alias = $(event.currentTarget).parent('div').first().attr('data-alias');
     if (alias) Meteor.call('aliasRemove', alias);
+  },
+  'click .member-payments': function(event) {
+    console.log("payments", $(event.currentTarget).parents('tr').attr('data-member'))
+    Session.set('current-member', $(event.currentTarget).parents('tr').attr('data-member'));
   }
 });
+
+Template.memberPaymentsList.helpers({
+  'payments': function () {}
+})
 
 // Memberpicker is used by the history view
 
 Template.memberpicker.helpers({
   members: function () {
     return Members.find({}, { sort: { date: -1 } });
+  }
+});
+
+Template.memberPayments.helpers({
+  months: function () {
+    var p = Payments.find({$and: [
+      {member: this._id},
+      {type: 'Membership'},
+      {months: {$exists: 1}}
+      ]}, {fields: {months: 1}}).fetch();
+    if (p.length == 0) return [];
+    var cal = [];
+    p = _.sortBy(_.flatten(_.pluck(p, 'months')), _.identity);
+    p.map(function(m) { return moment(m, 'YYYYMM') }).forEach(function(m) {
+      if (cal.length == 0) cal.push(m)
+      else {
+        if (_.last(cal).isSame(m, 'month')) _.last(cal).isDuplicate = true;
+        else cal.push(m);
+      }
+    })
+    return cal.map(function(m) { return {
+      year: m.year(),
+      month: m.format("MMM"),
+      color: m.isDuplicate ? "red" : ""
+    } });
   }
 });
 
