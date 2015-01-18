@@ -15,10 +15,27 @@
   </table>
 </template>
 
+<template name="member">
+  <tr data-member="{{_id}}">
+    <td class="collapsing">{{_id}}</td>
+    <td class="collapsing">{{joined}}</td>
+    <td class="collapsing">{{first}} {{last}}</td>
+    <td class="collapsing">{{email}}</td>
+    <td>
+    {{#each aliases}}
+      <div class="ui label" data-alias="{{_id}}">{{_id}}<i class="ui icon delete remove-alias"></i></div> 
+    {{/each}}
+    </td>
+  </tr>
+</template>
+
+<!-- used by the history view -->
+
 <template name="memberpicker">
   <table class="ui celled unstackable sortable small compact table" style="margin-top: 40px">
     <thead>
       <tr>
+        <th></th>
         <th>#</th>
         <th>Name</th>
         <th>Surname</th>
@@ -34,7 +51,11 @@
 </template>
 
 <template name="memberPick">
-  <tr class="member-pick-row" data-id="{{_id}}">
+  <tr data-member="{{_id}}">
+    <td class="collapsing">
+      <div class="ui mini icon button set-member"><i class="ui icon left arrow"></i></div>
+      <div class="ui mini icon button set-alias"><i class="ui icon star"></i></div>
+    </td>
     <td class="collapsing">{{_id}}</td>
     <td class="collapsing">{{first}}</td>
     <td class="collapsing">{{last}}</td>
@@ -42,14 +63,3 @@
     <td></td>
   </tr>
 </template>
-
-<template name="member">
-  <tr>
-    <td class="collapsing">{{_id}}</td>
-    <td class="collapsing">{{joined}}</td>
-    <td class="collapsing">{{first}} {{last}}</td>
-    <td class="collapsing">{{email}}</td>
-    <td></td>
-  </tr>
-</template>
-

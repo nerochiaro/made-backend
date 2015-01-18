@@ -4,18 +4,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="text/javascript">
   $(document).ready(function() {
-    $.tablesort.DEBUG = true;
-
     $('.menu .item').tab({history: false, debug: false}).on('click', function(e) { 
       console.log('tab clicked', $(this).attr('data-tab'))
     });
     $("#sidebar").sidebar('setting', { 
       dimPage: false,
-      onHide: function() { selectedMovement.removeClass('active'); },
+      onHide: function() { Session.set('current-payment', '-none-') },
       onShow: function() { 
         $(".table.sortable").tablesort() 
         $(".table.sortable").on('tablesort:complete', function(event, tablesort) {
-          $(event.target).find('tbody tr').click(memberPickClicked);
+          $(event.target).find('.ui.button.set-member').click(memberPickClicked);
+          $(event.target).find('.ui.button.set-alias').click(aliasPickClicked);
         });
       }    
     });

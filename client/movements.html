@@ -9,6 +9,7 @@
       <th class="right aligned">Amount</th>
       <th>Description</th>
       <th>Member</th>
+      <th>Proposals</th>
     </thead>
     <tbody>
     {{#each movements}}
@@ -19,7 +20,7 @@
 </template>
 
 <template name="movement">
-  <tr class="{{selected}} {{#if isIncome}}positive{{else}}negative{{/if}}" data-alias="{{alias}}" data-id="{{_id}}">
+  <tr class="{{color}}" data-alias="{{alias}}" data-id="{{_id}}">
     <td class="collapsing">{{humanDate}}</td>
     <td class="collapsing">{{_id}}</td>
     <td class="collapsing">{{type}}</td>
@@ -32,23 +33,25 @@
     <td>{{combinedDescription}}</td>
     <td class="collapsing">
       {{#if isPayment}}
-        {{#if member}}
-          {{#if member.isAlias}}
-          <div class="ui labeled teal mini button remove-alias"><i class="delete icon"></i>{{member.first}} {{member.last}}</div>
-          {{else}}
-          <div class="ui labeled green mini button"><i class="check icon"></i>{{member.first}} {{member.last}}</div>
-          {{/if}}
-        {{else}}
-          {{#each proposedMembers}}
-              {{#if addNew}}
-                <div class="ui labeled orange mini button choose-alias"><i class="ui user icon"></i> Find member</div>
-              {{else}}
-                <div class="ui label">
-                  <i class="question icon"></i>{{first}} {{last}}
-                </div>
-              {{/if}}
-          {{/each}}
+        {{#if payment.memberInfo}}
+        <div class="ui green label">
+          {{payment.memberInfo.first}} {{payment.memberInfo.last}}
+          <i class="ui close icon remove-member"></i>
+        </div>
         {{/if}}
+      {{/if}}
+    </td>
+    <td class="collapsing">
+      {{#if isPayment}}
+        {{#unless payment.memberInfo}}
+          {{#if proposedUser}}
+          <div class="ui label set-member" data-member="{{proposedUser._id}}">
+            <i class="ui icon left arrow"></i>
+            {{proposedUser.first}} {{proposedUser.last}}
+          </div>
+          {{/if}}
+          <div class="ui orange mini icon button pick-member"><i class="ui search icon"></i></div>
+        {{/unless}}
       {{/if}}
     </td>
   </tr>

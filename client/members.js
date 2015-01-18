@@ -11,8 +11,20 @@ Template.member.helpers({
     var d = String(this.dateJoined).split(" ")[0].split("/");
     d = ["<small>" + d[2] + "</small>", monthNames[parseInt(d[0], 10) - 1], d[1]] ;
     return Spacebars.SafeString(d.join("&nbsp;"));
+  },
+  aliases: function() {
+    return Aliases.find({user: String(this._id)});
   }
 });
+
+Template.member.events({
+  'click .ui.icon.remove-alias': function(event) {
+    var alias = $(event.currentTarget).parent('div').first().attr('data-alias');
+    if (alias) Meteor.call('aliasRemove', alias);
+  }
+});
+
+// Memberpicker is used by the history view
 
 Template.memberpicker.helpers({
   members: function () {
@@ -20,15 +32,28 @@ Template.memberpicker.helpers({
   }
 });
 
-memberPickClicked = function(event) {
-  event.preventDefault();
-  var user = $(event.currentTarget).attr('data-id');
-  var alias = $(selectedMovement).attr('data-alias');
-  console.log("aliasing:", user, alias);
-  Meteor.call('aliasAdd', user, alias);
+// This needs to stay globally declared as the table sorter will need
+// to reassign the event after sorting
+aliasPickClicked = function(event) {
+  var member = $(event.currentTarget).parents('tr').attr('data-member');
+  var movement = Session.get('current-payment');
+  var alias = $('tr[data-id="' + movement + '"]').attr('data-alias');
+  console.log("aliasing:", member, alias);
+  Meteor.call('aliasAdd', member, alias);
+  Session.set('current-payment', '-none-')
   $("#sidebar").sidebar('hide');
-}
+} 
+
+memberPickClicked = function(event) {
+  var member = $(event.currentTarget).parents('tr').attr('data-member');
+  var payment = Session.get('current-payment');
+  console.log("setting member:", payment, member);
+  Meteor.call('paymentMemberSet', payment, member);
+  Session.set('current-payment', '-none-')
+  $("#sidebar").sidebar('hide');
+} 
 
 Template.memberPick.events({
-  'click .member-pick-row': memberPickClicked
+  'click .ui.button.set-alias': aliasPickClicked,
+  'click .ui.button.set-member': memberPickClicked  
 });

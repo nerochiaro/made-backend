@@ -188,8 +188,9 @@ MADEStats.readMembersFile = Async.wrap(function(filename, callback) {
         phone: data[4],
         fiscalId: data[5],
         _id: String(id),
-        payments: data.slice(9)
+        payments: data.slice(9),
       };
+      item.clean = cleanAccents(item.first + " " + item.last);
       items.push(item);
   })
   .on("end", function(){
@@ -265,10 +266,11 @@ MADEStats.correlateMovements = function(movements) {
   })
 }
 
+function cleanAccents(name) {
+  return name.replace(/[éè]/, "e").replace(/[òó]/ig, "o").replace(/[àá]/ig, "a").replace(/[ìí]/ig, "i").replace(/[ùú]/gi, "u");
+}
+
 function correlateMembers(movements, members) {
-  function cleanAccents(name) {
-    return name.replace(/[éè]/, "e").replace(/[òó]/ig, "o").replace(/[àá]/ig, "a").replace(/[ìí]/ig, "i").replace(/[ùú]/gi, "u");
-  }
   var indexes = members.reduce(function(index, m) {
     var name = cleanAccents(m.first.split(" ")[0]).toUpperCase();
     if (index.firstName[name]) index.firstName[name].push(m);

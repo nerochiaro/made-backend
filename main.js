@@ -46,12 +46,22 @@ if (Meteor.isServer) {
     insertRecords(movements.bank, Movements);
     insertRecords(members, Members);
 
+    // FIXME: refactor this with the one in stats.js
+    function cleanAccents(name) {
+      return name.replace(/[éè]/, "e").replace(/[òó]/ig, "o").replace(/[àá]/ig, "a").replace(/[ìí]/ig, "i").replace(/[ùú]/gi, "u");
+    }
     // Payment information for cash payments is strictly from the Cash.csv file and not editable
     // We reinsert it in Payments to simplify the application
     Payments.remove({_id: {$regex: /^CA.*/}})
     movements.cash.forEach(function(c) {
-      Payments.insert({ _id: c._id, months: c.months, type: c.type }, function(err, id) { if (err) console.log("cash months insert err:", err, id)})
-    })      
+      var item = { months: c.months, type: c.type }
+      if (c.description) {
+        console.log(cleanAccents(c.description));
+        var member = Members.findOne({clean: cleanAccents(c.description)});
+        if (member) item.member = member._id;
+      }
+      Payments.upsert(c._id, {$set: item}, function(err, id) { if (err) console.log("cash months insert err:", err, id)})
+    })
 
     //OneOff.importPayments(false);
   });
@@ -94,7 +104,7 @@ if (Meteor.isServer) {
           var ym = pad(year, 4) + pad(parseInt(month, 10) + 1, 2);
           var months = payment.months || [];
 
-          if (payment.months.indexOf(ym) != -1) {
+          if (payment.months && payment.months.indexOf(ym) != -1) {
             months = _.without(months, ym);
           } else {
             months.push(ym);
@@ -106,6 +116,18 @@ if (Meteor.isServer) {
           });
         }
       }
+    },
+    paymentMemberRemove: function (payment) {
+      console.log("calling remove member", payment);
+      if (payment)
+        Payments.update({_id: payment}, {$unset: { member: "" }});
+    },
+    paymentMemberSet: function (payment, member) {
+      console.log("calling set member", payment, member);
+      if (payment)
+        Payments.upsert(payment, {$set: { member: member }}, function(err, id) {
+          if (err) console.log("upsert failed", id);
+        });
     }
   })
 

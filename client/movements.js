@@ -1,8 +1,15 @@
-selectedMovement = null;
-
 Template.history.helpers({
   movements: function () {
-    return Movements.find({}, { sort: { date: 1 } });
+    return Movements.find({}, { sort: { date: 1 } }).map(function(m){
+      if (movementIsPayment(m)) {
+        // FIXME: All the following fetching is probably inefficient. Denormalize or collect+update later.
+        m.payment = Payments.findOne(m._id);
+        if (m.payment && m.payment.hasOwnProperty('member')) {
+          m.payment.memberInfo = Members.findOne(String(m.payment.member));
+        }
+      }
+      return m;
+    });
   }
 });
 
@@ -43,7 +50,6 @@ Template.movement.helpers({
   humanAmount: function() { 
     return String(this.amount).slice(0, -2) + "." + String(this.amount).slice(-2) 
   },
-  isIncome: function() { return this.amount >= 0 },
   currency: function() { 
     if (this.currency === undefined) return "€";
     else return ({ "GBP" : "£", "USD" : "$", "EUR" : "€"}[this.currency]) || this.currency;
@@ -62,31 +68,18 @@ Template.movement.helpers({
     return (this.member === undefined) ? [{addNew: true}] : []
   },
   alias: function() { return movementAlias(this) },
-  member: function() {
-    if (this.member) return this.member;
+  proposedUser: function() {
     var alias = Aliases.findOne(movementAlias(this));
-    if (alias) {
-      var member = Members.findOne(alias.user);
-      if (member) {
-        member.isAlias = true;
-        return member;
-      }
-    }
-    return null;
+    if (alias) return member = Members.findOne(alias.user);
   },
   type: function() {
     if (this.source == "PP") return payPalTypeMap[this.type] || this.type;
     return (this.source == "CA") ? "Payment" : this.type;
   },
   isPayment: function() { return movementIsPayment(this) },
-  payment: function() {
-    var payment = Payments.findOne(this._id);
-    if (payment) { 
-      payment.source = this.source;
-      if (this.source == "CA") payment.type = this.type;
-      return payment; 
-    }
-    return null;  
+  color: function() { 
+    return Session.get('current-payment') == this._id ? "active" :
+           (this.amount >= 0 ? "positive" : "negative") 
   }
 });
 
@@ -150,14 +143,20 @@ Template.periodEditor.events({
 })
 
 Template.movement.events({
-  'click .ui.button.choose-alias': function (event) {
-    selectedMovement = $(event.currentTarget).parents('tr');
-    selectedMovement.addClass('active');
+  'click .ui.button.pick-member': function (event) {
+    var payment = $(event.currentTarget).parents('tr').attr('data-id');
+    console.log(payment);
+    Session.set('current-payment', payment)
     $("#sidebar").sidebar('show');
   },
-  'click .ui.button.remove-alias': function (event) {
+  'click .ui.icon.remove-member': function (event) {
     var movement = $(event.currentTarget).parents('tr');
-    Meteor.call('aliasRemove', movement.attr('data-alias'));
+    Meteor.call('paymentMemberRemove', movement.attr('data-id'));
+  },
+  'click .ui.label.set-member': function (event) {
+    var movement = $(event.currentTarget).parents('tr').attr('data-id');
+    var member = $(event.currentTarget).attr('data-member');
+    Meteor.call('paymentMemberSet', movement, member);
   },
   'click .ui.button.cycle-reason': function (event) {
     var movement = $(event.currentTarget).parents('tr');
