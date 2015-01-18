@@ -1,19 +1,21 @@
 OneOff = {
   importPayments: function(remove) {
-    if (remove) Payments.remove({});
+    //if (remove) Payments.remove({});
     for (var id in paymentInfo) {
       var payment = paymentInfo[id];
-      if (id.substring(0, 2) == "BK") id = id + "-04";
-      payment._id = id; 
-      Payments.insert(payment, function(err, id) {
-        if (err) console.log("FAILED INSERT", id);
-      }) 
+      if (id.substring(0, 2) == "BK") {
+        id = id + "-04";
+        //payment._id = id;
+        Payments.upsert(id, {$set: payment}, function(err, id) {
+          if (err) console.log("FAILED INSERT", id);
+        })
+      }
     }
     console.log("Imported payments: ", Payments.find({}).count());
   }
 }
 
-var paymentInfo = 
+var paymentInfo =
 { 'BK0001801402-000000000000': { type: 'Membership', months: [ '201312', '201401', '201402' ] },
   PP2YV99272GG3107706: { type: 'Membership', months: [ '201403' ] },
   'BK0001759501-000000000000': { type: '', months: [] },
@@ -92,12 +94,12 @@ var paymentInfo =
   PP5SR2901171925723D: { type: 'Laser', months: [ '201410' ] },
   PP7TF77001AC331450B: { type: 'Membership', months: [ '201411' ] },
   PP3TD77776Y5806821D: { type: 'Laser', months: [ '201409' ] },
-  PP50A22601BU1468319: 
+  PP50A22601BU1468319:
    { type: 'Membership',
      months: [ '201404', '201405', '201406', '201407', '201408', '201409' ] },
   'BK0002580398-000000000000': { type: 'Membership', months: [ '201408' ] },
   PP2S521248SA431452F: { type: 'Membership', months: [ '201410' ] },
-  PP0KL72732D2372802K: 
+  PP0KL72732D2372802K:
    { type: 'Laser+Member',
      months: [ '201407', '201408', '201409' ] },
   PP4S328175FS128425H: { type: 'Membership', months: [ '201411' ] },
@@ -209,7 +211,7 @@ var paymentInfo =
   PP26N26855ST252801R: { type: 'Membership', months: [ '201409' ] },
   'BK0001405096|000000000000|': { type: '', months: [] },
   PP9VL56304Y21208120: { type: 'Membership', months: [ '201411' ] },
-  PP8NR02066KH900234W: 
+  PP8NR02066KH900234W:
    { type: 'Laser',
      months: [ '201404', '201405', '201406', '201407', '201408', '201409' ] },
   'BK0001492758|000000000000|': { type: '', months: [] },
