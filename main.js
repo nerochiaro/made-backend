@@ -36,13 +36,11 @@ if (Meteor.isServer) {
           else inserted++;
         });
       });
-      console.log(duplicates);
     };
 
     movements.paypal.map(function(m) {
       var match = Members.findOne({ email: m.email });
       if (match) m.member = { id: match._id, first: match.first, last: match.last };
-      else console.log("no match for", m.email)
       return m;
     });
 
@@ -63,7 +61,6 @@ if (Meteor.isServer) {
     movements.cash.forEach(function(c) {
       var item = { months: c.months, type: c.type }
       if (c.description) {
-        console.log(cleanAccents(c.description));
         var member = Members.findOne({clean: cleanAccents(c.description)});
         if (member) item.member = member._id;
       }
