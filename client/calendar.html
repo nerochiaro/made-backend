@@ -1,0 +1,43 @@
+<template name="calendar">
+  {{#with data}}
+  <table class="ui celled collapsing compact unstackable table" style="margin-top: 40px">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        {{#each span}}
+          <th>{{monthName this}}</th>
+        {{/each}}
+      </tr>
+    </thead>
+    <tbody>
+    {{#each payingMembers members}}
+      {{> memberData}}
+    {{/each}}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="2">Totals</th>
+        {{#each totals}}
+        <th>{{this}}</th>
+        {{/each}}
+      </tr>
+    </tfoot>
+  </table>
+  {{/with}}
+</template>
+
+<template name="memberData">
+  <tr>
+    <td>{{member._id}}</td>
+    <td>{{member.clean}}</td>
+    {{#each ../span}}
+      {{#if hasPaidMonth ../payments}}
+      <td class="positive">{{monthName this}}</td>
+      {{else}}
+       <td></td>
+      {{/if}}
+    {{/each}}
+  </tr>
+</template>
+
