@@ -48,9 +48,7 @@ Template.movement.helpers({
     p.unshift("<small>" + d.substring(0, 4) + "</small>");
     return Spacebars.SafeString(p.join("&nbsp;"));
   },
-  humanAmount: function() {
-    return String(this.amount).slice(0, -2) + "." + String(this.amount).slice(-2)
-  },
+  humanAmount: function() { return Util.renderAmount(this.amount) },
   currency: function() {
     if (this.currency === undefined) return "€";
     else return ({ "GBP" : "£", "USD" : "$", "EUR" : "€"}[this.currency]) || this.currency;

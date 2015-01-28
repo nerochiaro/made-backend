@@ -8,6 +8,38 @@ if (Meteor.isClient) {
   Meteor.subscribe('paymentsList')
   Meteor.subscribe('aliasesList')
   Meteor.subscribe('movementsList')
+
+  Router.route('/', function() { this.render('main') });
+
+  Template.main.rendered = function() {
+    var startingTab = 'members';
+    Session.set('current-tab', startingTab);
+    $('[data-tab="' + startingTab + '"]').addClass('active');
+    console.log($('.ui.menu'))
+    $('.menu .item').tab({history: false, debug: false}).on('click', function(e) {
+      Session.set('current-tab', $(this).attr('data-tab'))
+      console.log("tab switch")
+    });
+    $("#sidebar").sidebar('setting', {
+      dimPage: false,
+      onHide: function() { Session.set('current-payment', '-none-') },
+      onShow: function() {
+        $(".table.sortable").tablesort()
+        $(".table.sortable").on('tablesort:complete', function(event, tablesort) {
+          $(event.target).find('.ui.button.set-member').click(memberPickClicked);
+          $(event.target).find('.ui.button.set-alias').click(aliasPickClicked);
+        });
+      }
+    });
+  }
+} else {
+    Router.route('/export/income.csv', function() {
+    this.response.writeHead(200, {
+      'Content-Type': 'text/csv'
+    });
+    Export.income(111, 20141016, this.response);
+    this.response.end();
+  }, {where: 'server'})
 }
 
 // On server startup, create some players if the database is empty.
@@ -55,6 +87,7 @@ if (Meteor.isServer) {
     function cleanAccents(name) {
       return name.replace(/[éè]/, "e").replace(/[òó]/ig, "o").replace(/[àá]/ig, "a").replace(/[ìí]/ig, "i").replace(/[ùú]/gi, "u");
     }
+
     // Payment information for cash payments is strictly from the Cash.csv file and not editable
     // We reinsert it in Payments to simplify the application
     Payments.remove({_id: {$regex: /^CA.*/}})

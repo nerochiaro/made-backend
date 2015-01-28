@@ -4,29 +4,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="text/javascript">
   $(document).ready(function() {
-    var startingTab = 'members';
-    Session.set('current-tab', startingTab);
-    $('[data-tab="' + startingTab + '"]').addClass('active');
 
-    $('.menu .item').tab({history: false, debug: false}).on('click', function(e) {
-      Session.set('current-tab', $(this).attr('data-tab'))
-    });
-    $("#sidebar").sidebar('setting', {
-      dimPage: false,
-      onHide: function() { Session.set('current-payment', '-none-') },
-      onShow: function() {
-        $(".table.sortable").tablesort()
-        $(".table.sortable").on('tablesort:complete', function(event, tablesort) {
-          $(event.target).find('.ui.button.set-member').click(memberPickClicked);
-          $(event.target).find('.ui.button.set-alias').click(aliasPickClicked);
-        });
-      }
-    });
   });
   </script>
 </head>
 
 <body>
+</body>
+
+<template name="main">
   <div class="ui right very wide vertical sidebar" id="sidebar">
     {{> memberpicker}}
   </div>
@@ -46,4 +32,4 @@
       {{> history}}
     </div>
   </div>
-</body>
+</template>
