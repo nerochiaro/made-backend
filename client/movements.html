@@ -1,29 +1,10 @@
 <template name="history">
-
-<div class="ui form compact">
-  <div class="three fields">
-  <div class="field">
-  <div class="ui toggle checkbox filter-type" data-filter="PP">
-      <input type="checkbox" checked="">
-      <label>Paypal</label>
-  </div>
-  </div>
-  <div class="field">
-  <div class="ui toggle checkbox filter-type" data-filter="BK">
-      <input type="checkbox" checked="">
-      <label>Bank</label>
-  </div>
-  </div>
-  <div class="field">
-  <div class="ui toggle checkbox filter-type" data-filter="CA">
-      <input type="checkbox" checked="">
-      <label>Cash</label>
-  </div>
-  </div>
-  </div>
-</div>
-
   <table class="ui unstackable table" style="margin-top: 40px">
+    <thead>
+      <th colspan="9">
+      {{> filters}}
+      </th>
+    </thead>
     <thead>
       <th >Date</th>
       <th>ID</th>
@@ -41,6 +22,56 @@
     {{/each}}
     </tbody>
   </table>
+</template>
+
+<template name="filters">
+  <div class="ui grid segment">
+
+    <div class="four wide column">
+        <h4 class="ui header">Source</h4>
+
+        <div class="ui three column center aligned grid segment">
+          <div class="column">
+            <div class="ui toggle checkbox filter-type" data-filter="PP">
+                <input type="checkbox" checked="">
+                <label>Paypal</label>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="ui toggle checkbox filter-type" data-filter="BK">
+                <input type="checkbox" checked="">
+                <label>Bank</label>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="ui toggle checkbox filter-type" data-filter="CA">
+                <input type="checkbox" checked="">
+                <label>Cash</label>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="three wide column">
+        <h4 class="ui header">Direction</h4>
+
+        <div class="ui two column center aligned grid segment">
+          <div class="column">
+            <div class="ui toggle checkbox filter-amount" data-filter="+">
+                <input type="checkbox" checked="">
+                <label>Income</label>
+            </div>
+          </div>
+          <div class="column">
+            <div class="ui toggle checkbox filter-amount" data-filter="-">
+                <input type="checkbox" checked="">
+                <label>Expense</label>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
 </template>
 
 <template name="movement">

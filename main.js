@@ -12,7 +12,7 @@ if (Meteor.isClient) {
   Router.route('/', function() { this.render('main') });
 
   Template.main.rendered = function() {
-    var startingTab = 'members';
+    var startingTab = 'movements';
     Session.set('current-tab', startingTab);
     $('[data-tab="' + startingTab + '"]').addClass('active');
     console.log($('.ui.menu'))

@@ -1,11 +1,22 @@
 Template.history.helpers({
   movements: function () {
     if (Session.get('current-tab') != 'movements') return [];
-    var exclude = Session.get("movement-filter-exclude") || []
-    console.log("Movements: exclude:", exclude)
-    var query = (exclude.length > 0) ? {
-      _id: { $not: { $regex: "^(" + exclude.join("|") + ")" } }
-    } : {}
+
+    var and = []
+    var exclude = Session.get("movement-filter-type") || []
+    if (exclude.length > 0) {
+      console.log("Movements: exclude type:", exclude)
+      and.push({ _id: { $not: { $regex: "^(" + exclude.join("|") + ")" } } })
+    }
+
+    var exclude = Session.get("movement-filter-amount") || []
+    if (exclude.length > 0) {
+      console.log("Movements: exclude amount:", exclude)
+      if (_.contains(exclude, "+")) and.push({ amount: { $lt: 0 }})
+      if (_.contains(exclude, "-")) and.push({ amount: { $gt: 0 }})
+    }
+
+    var query = and.length > 0 ? { $and: and } : {}
     return Movements.find(query, { sort: { date: 1 } }).map(function(m){
       if (movementIsPayment(m)) {
         // FIXME: All the following fetching is probably inefficient. Denormalize or collect+update later.
@@ -183,16 +194,27 @@ Template.paymentDetails.events({
   }
 });
 
-function updateMovementFilters() {
+function updateMovementTypeFilters() {
   var exclude = [];
   $(".ui.checkbox.filter-type").each(function() {
     if (!$(this).checkbox("is checked")) exclude.push($(this).attr("data-filter"))
   });
-  Session.set("movement-filter-exclude", exclude)
+  Session.set("movement-filter-type", exclude)
+}
+
+function updateMovementAmountFilters() {
+  var exclude = [];
+  $(".ui.checkbox.filter-amount").each(function() {
+    if (!$(this).checkbox("is checked")) exclude.push($(this).attr("data-filter"))
+  });
+  Session.set("movement-filter-amount", exclude)
 }
 
 Template.history.rendered = function() {
   $(".ui.checkbox.filter-type").checkbox("setting", {
-    onChange: updateMovementFilters
-  });
+    onChange: updateMovementTypeFilters
+  })
+  $(".ui.checkbox.filter-amount").checkbox("setting", {
+    onChange: updateMovementAmountFilters
+  })
 }
