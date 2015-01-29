@@ -1,7 +1,12 @@
 Template.history.helpers({
   movements: function () {
     if (Session.get('current-tab') != 'movements') return [];
-    return Movements.find({}, { sort: { date: 1 } }).map(function(m){
+    var exclude = Session.get("movement-filter-exclude") || []
+    console.log("Movements: exclude:", exclude)
+    var query = (exclude.length > 0) ? {
+      _id: { $not: { $regex: "^(" + exclude.join("|") + ")" } }
+    } : {}
+    return Movements.find(query, { sort: { date: 1 } }).map(function(m){
       if (movementIsPayment(m)) {
         // FIXME: All the following fetching is probably inefficient. Denormalize or collect+update later.
         m.payment = Payments.findOne(m._id);
@@ -153,7 +158,6 @@ Template.periodEditor.events({
 Template.movement.events({
   'click .ui.button.pick-member': function (event) {
     var payment = $(event.currentTarget).parents('tr').attr('data-id');
-    console.log(payment);
     Session.set('current-payment', payment)
     $("#sidebar").sidebar('show');
   },
@@ -175,7 +179,20 @@ Template.movement.events({
 
 Template.paymentDetails.events({
   'click .ui.buttons.period-selector .ui.button': function (event) {
-    console.log(event.currentTarget)
     $(event.currentTarget).toggleClass('basic');
   }
 });
+
+function updateMovementFilters() {
+  var exclude = [];
+  $(".ui.checkbox.filter-type").each(function() {
+    if (!$(this).checkbox("is checked")) exclude.push($(this).attr("data-filter"))
+  });
+  Session.set("movement-filter-exclude", exclude)
+}
+
+Template.history.rendered = function() {
+  $(".ui.checkbox.filter-type").checkbox("setting", {
+    onChange: updateMovementFilters
+  });
+}
