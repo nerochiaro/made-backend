@@ -52,7 +52,7 @@
 <template name="memberPaymentsList">
   <table class="ui celled unstackable table">
   {{#each payments}}
-    {{> movement item=this memberedit=false}}
+    {{> movement item=this noMemberEdit=true noTypeEdit=true}}
   {{/each}}
   </table>
 </template>

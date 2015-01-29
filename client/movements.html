@@ -1,4 +1,28 @@
 <template name="history">
+
+<div class="ui form compact">
+  <div class="three fields">
+  <div class="field">
+  <div class="ui toggle checkbox">
+      <input type="checkbox">
+      <label>Paypal</label>
+  </div>
+  </div>
+  <div class="field">
+  <div class="ui toggle checkbox">
+      <input type="checkbox">
+      <label>Bank</label>
+  </div>
+  </div>
+  <div class="field">
+  <div class="ui toggle checkbox">
+      <input type="checkbox">
+      <label>Cash</label>
+  </div>
+  </div>
+  </div>
+</div>
+
   <table class="ui unstackable table" style="margin-top: 40px">
     <thead>
       <th >Date</th>
@@ -13,7 +37,7 @@
     </thead>
     <tbody>
     {{#each movements}}
-      {{> movement item=this memberedit=true}}
+      {{> movement item=this}}
     {{/each}}
     </tbody>
   </table>
@@ -33,7 +57,7 @@
     <td class="right aligned collapsing">{{humanAmount}} {{currency}}</td>
     <td>{{combinedDescription}}</td>
     <td class="collapsing">
-      {{#if ../memberedit}}
+      {{#unless ../noMemberEdit}}
       {{#if isPayment}}
         {{#if payment.memberInfo}}
         <div class="ui green label">
@@ -42,10 +66,10 @@
         </div>
         {{/if}}
       {{/if}}
-      {{/if}}
+      {{/unless}}
     </td>
     <td class="collapsing">
-      {{#if ../memberedit}}
+      {{#unless ../noMemberEdit}}
       {{#if isPayment}}
         {{#unless payment.memberInfo}}
           {{#if proposedUser}}
@@ -57,7 +81,7 @@
           <div class="ui orange mini icon button pick-member"><i class="ui search icon"></i></div>
         {{/unless}}
       {{/if}}
-      {{/if}}
+      {{/unless}}
     </td>
   </tr>
   {{/with}}
@@ -65,17 +89,19 @@
 
 <template name="paymentDetails">
   <td class="collapsing">
-    {{#if isEditable}}
+    {{#if isTypeEditable ../../noTypeEdit}}
       <div class="ui mini basic icon button cycle-reason"><i class="refresh icon"></i></div>
     {{/if}}
     {{#if type}}<div class="ui small label">{{type}}</div>{{/if}}
   </td>
-  <td class="collapsing period-area">
+  <td class="collapsing {{isPeriodEditable ../../noPeriodEdit}}">
     {{#if editingPeriod}}
       <div class="ui label">Choose payment period</div>
       {{> periodEditor this}}
     {{else}}
-      {{#each period}}<div class="ui label mini">{{this}}</div>{{/each}}
+      {{#each period}}
+      <div class="ui label mini">{{this}}</div>
+      {{/each}}
     {{/if}}
   </td>
 </template>

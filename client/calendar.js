@@ -47,6 +47,22 @@ Template.memberData.helpers({
   }
 })
 
+Template.monthPayments.helpers({
+  payments: function() {
+    var month = moment(Session.get("current-month-payments"))
+    if (!month.isValid()) return [];
+    return paymentsForMonth(month);
+  }
+})
+
+Template.calendar.events({
+  'click .ui.button.month-payments': function(event) {
+    var month = $(event.currentTarget).attr('data-month');
+    console.log(">>>>", month);
+    Session.set("current-month-payments", month)
+  }
+});
+
 function paymentsForMember(member) {
   var p = Payments.find({$and: [
     {member: member._id},
@@ -55,6 +71,25 @@ function paymentsForMember(member) {
     ]}, {fields: {months: 1}}).fetch();
   if (p.length == 0) return [];
   return _.sortBy(_.flatten(_.pluck(p, 'months')), _.identity);
+}
+
+function paymentsForMonth(month) {
+  var months = [month.format("YYYYMM")]
+  var p = Payments.find({$and: [
+    {$or: [{type: 'Membership'}, {type: 'Member+Laser'}]},
+    {months: {$in: months}}
+    ]}).fetch();
+  if (p.length == 0) return [];
+
+  var mapped = _.groupBy(p, "_id");
+  var movements = Movements.find({_id: {$in: _.keys(mapped)}}).fetch();
+
+  movements = _.sortBy(_.map(movements, function(m) {
+    m.payment = mapped[m._id][0]
+    return m
+  }), "date");
+
+  return movements;
 }
 
 function calendarSpan(first, last) {

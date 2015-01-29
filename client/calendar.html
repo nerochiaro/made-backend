@@ -22,9 +22,20 @@
         <th>{{this}}</th>
         {{/each}}
       </tr>
+      <tr>
+        <th colspan="2">Month payments</th>
+        {{#each span}}
+        <th>
+        <div class="ui mini icon button month-payments" data-month="{{this}}">
+          <i class="icon down arrow"></i>
+        </div>
+        </th>
+        {{/each}}
+      </tr>
     </tfoot>
   </table>
   {{/with}}
+  {{> monthPayments}}
 </template>
 
 <template name="memberData">
@@ -39,5 +50,16 @@
       {{/if}}
     {{/each}}
   </tr>
+</template>
+
+<template name="monthPayments">
+  <table class="ui celled unstackable table">
+    {{#each payments}}
+      {{> movement item=this
+                   noMemberEdit=true
+                   noPeriodEdit=true
+                   noTypeEdit=true}}
+    {{/each}}
+  </table>
 </template>
 

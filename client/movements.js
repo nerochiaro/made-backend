@@ -86,7 +86,14 @@ Template.movement.helpers({
 });
 
 Template.paymentDetails.helpers({
-  isEditable: function () { return this && this.source != "CA" },
+  isPeriodEditable: function (noPeriodEdit) {
+    // Cash movements can only be edited via the spreadsheet
+    return !noPeriodEdit && this && this.source != "CA" ? "period-area" : ""
+  },
+  isTypeEditable: function (noTypeEdit) {
+    // Cash movements can only be edited via the spreadsheet
+    return !noTypeEdit && this && this.source != "CA"
+  },
   period: function() {
     return this.months ? this.months.map(function(m) {
       return monthNames[splitYYYYMM(m).month - 1];
@@ -98,8 +105,7 @@ Template.paymentDetails.helpers({
 Template.paymentDetails.events({
   'click td.period-area': function (event) {
     var id = $(event.currentTarget).parents('tr').attr('data-id');
-    // Cash movements are not editable. Use the spreadsheet.
-    if (id.substring(0, 2) != 'CA') Session.set('current-period', id);
+    Session.set('current-period', id);
   }
 });
 
